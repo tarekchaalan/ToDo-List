@@ -12,6 +12,7 @@ function App() {
     JSON.parse(localStorage.getItem("deletedTasks")) || []
   );
   const [inputValue, setInputValue] = useState("");
+  const [inputDate, setInputDate] = useState(""); // new state for the date
   const [currentTab, setCurrentTab] = useState("tasks"); // "tasks", "completed", "deleted"
 
   useEffect(() => {
@@ -26,16 +27,39 @@ function App() {
     localStorage.setItem("deletedTasks", JSON.stringify(deletedTasks));
   }, [deletedTasks]);
 
+  const getSortedTasks = () => {
+    return [...tasks].sort((a, b) => a.deadline.localeCompare(b.deadline));
+  };
+
   const addTask = () => {
     if (inputValue) {
-      setTasks([...tasks, { value: inputValue, editable: false }]);
+      setTasks([
+        ...tasks,
+        { value: inputValue, editable: false, deadline: inputDate },
+      ]);
       setInputValue("");
+      setInputDate(""); // clear the date field
     }
   };
 
-  const completeTask = (index) => {
-    const taskToComplete = tasks[index];
-    setCompletedTasks([...completedTasks, taskToComplete]);
+  const completeTask = (sortedIndex) => {
+    const index = tasks.findIndex(
+      (task) => task === getSortedTasks()[sortedIndex]
+    );
+    const taskToComplete = tasks[index]; // Add this line
+    setCompletedTasks([...completedTasks, taskToComplete]); // And this line
+
+    const newTasks = [...tasks];
+    newTasks.splice(index, 1);
+    setTasks(newTasks);
+  };
+
+  const removeTask = (sortedIndex) => {
+    const index = tasks.findIndex(
+      (task) => task === getSortedTasks()[sortedIndex]
+    );
+    const taskToDelete = tasks[index]; // Add this line
+    setDeletedTasks([...deletedTasks, taskToDelete]); // And this line
 
     const newTasks = [...tasks];
     newTasks.splice(index, 1);
@@ -45,15 +69,6 @@ function App() {
   const clearCompletedTasks = () => {
     setCompletedTasks([]);
     localStorage.setItem("completedTasks", JSON.stringify([]));
-  };
-
-  const removeTask = (index) => {
-    const taskToDelete = tasks[index];
-    setDeletedTasks([...deletedTasks, taskToDelete]);
-
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
   };
 
   const permanentlyRemove = (index) => {
@@ -66,9 +81,31 @@ function App() {
     setDeletedTasks([]); // This will clear the deletedTasks state
   };
 
-  const editTask = (index) => {
+  const recoverTask = (index) => {
+    const taskToRecover = deletedTasks[index];
+    setTasks([...tasks, taskToRecover]);
+
+    const newDeleted = [...deletedTasks];
+    newDeleted.splice(index, 1);
+    setDeletedTasks(newDeleted);
+  };
+
+  const editTask = (sortedIndex) => {
+    const originalTask = getSortedTasks()[sortedIndex];
+    const index = tasks.findIndex(
+      (task) =>
+        task.value === originalTask.value &&
+        task.deadline === originalTask.deadline
+    );
+
     let copy = [...tasks];
     copy[index].editable = true;
+    setTasks(copy);
+  };
+
+  const updateTaskDeadline = (index, newDeadline) => {
+    let copy = [...tasks];
+    copy[index].deadline = newDeadline;
     setTasks(copy);
   };
 
@@ -78,7 +115,14 @@ function App() {
     setTasks(copy);
   };
 
-  const saveTask = (index) => {
+  const saveTask = (sortedIndex) => {
+    const originalTask = getSortedTasks()[sortedIndex];
+    const index = tasks.findIndex(
+      (task) =>
+        task.value === originalTask.value &&
+        task.deadline === originalTask.deadline
+    );
+
     let copy = [...tasks];
     copy[index].editable = false;
     setTasks(copy);
@@ -87,37 +131,54 @@ function App() {
   const getContentView = () => {
     switch (currentTab) {
       case "tasks":
-        return tasks.map((task, index) => (
-          <li key={index} className="task-item">
+        return getSortedTasks().map((task, sortedIndex) => (
+          <li key={sortedIndex} className="task-item">
             <div className="task-content">
-              <button className="edit-btn" onClick={() => editTask(index)}>
+              <button
+                className="edit-btn"
+                onClick={() => editTask(sortedIndex)}
+              >
                 Edit
               </button>
               {task.editable ? (
-                <input
-                  type="text"
-                  className="task-text"
-                  value={task.value}
-                  onChange={(e) => updateTask(e, index)}
-                />
+                <>
+                  <input
+                    type="text"
+                    className="task-text"
+                    value={task.value}
+                    onChange={(e) => updateTask(e, sortedIndex)}
+                  />
+                  <input
+                    type="date"
+                    value={task.deadline}
+                    onChange={(e) =>
+                      updateTaskDeadline(sortedIndex, e.target.value)
+                    }
+                  />
+                </>
               ) : (
-                <span>- {task.value}</span>
+                <>
+                  <span>• {task.value}</span>
+                  <div className="flex-grow">
+                    Deadline: {task.deadline || "None"}
+                  </div>
+                </>
               )}
             </div>
             <div className="task-buttons">
               {task.editable ? (
-                <button onClick={() => saveTask(index)}>Save</button>
+                <button onClick={() => saveTask(sortedIndex)}>Save</button>
               ) : (
                 <>
                   <button
                     className="complete-btn"
-                    onClick={() => completeTask(index)}
+                    onClick={() => completeTask(sortedIndex)}
                   >
                     Complete
                   </button>
                   <button
                     className="remove-btn"
-                    onClick={() => removeTask(index)}
+                    onClick={() => removeTask(sortedIndex)}
                   >
                     Remove
                   </button>
@@ -134,8 +195,8 @@ function App() {
                 Clear Completed Tasks
               </button>
             ) : null}
-            {completedTasks.map((task, index) => (
-              <li key={index}>{task.value}</li>
+            {completedTasks.map((task, sortedIndex) => (
+              <li key={sortedIndex}>{task.value}</li>
             ))}
             {completedTasks.length ? (
               <button className="remove-btn" onClick={clearCompletedTasks}>
@@ -152,17 +213,23 @@ function App() {
                 Permanently Remove All
               </button>
             )}
-            {deletedTasks.map((task, index) => (
-              <li key={index} className="task-item">
+            {deletedTasks.map((task, sortedIndex) => (
+              <li key={sortedIndex} className="task-item">
                 <div className="task-content">
-                  <span>- {task.value}</span>
+                  <span>• {task.value}</span>
                 </div>
                 <div className="task-buttons">
                   <button
                     className="remove-btn"
-                    onClick={() => permanentlyRemove(index)}
+                    onClick={() => permanentlyRemove(sortedIndex)}
                   >
                     Delete
+                  </button>
+                  <button
+                    className="recover-btn"
+                    onClick={() => recoverTask(sortedIndex)}
+                  >
+                    Recover
                   </button>
                 </div>
               </li>
@@ -188,6 +255,11 @@ function App() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Enter Task..."
+          />
+          <input
+            type="date"
+            value={inputDate}
+            onChange={(e) => setInputDate(e.target.value)}
           />
           <button className="add-btn" onClick={addTask}>
             Add

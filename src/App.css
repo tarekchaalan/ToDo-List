@@ -30,10 +30,13 @@ input {
     padding: 10px 16px;
     font-size: 16px;
     color: White;
-    border: 2px solid white;
-    border-radius: 10px;
+    border: 3px solid white;
+    border-right: none;
+    border-left: none;
+    border-radius: 1px;
     background-color: transparent;
     margin-bottom: 10px;
+    outline: none;
 }
 
 /* For most modern browsers */
@@ -100,6 +103,11 @@ button {
     transition: background-color 0.3s ease;
 }
 
+.flex-grow {
+  flex-grow: 1;
+  text-align: right;
+}
+
 /* Add Button */
 .add-btn {
     background-color: #4CAF50;
@@ -142,6 +150,15 @@ button {
 
 .remove-all-btn:hover {
   background-color: #D32F2F; /* Darken the background on hover */
+}
+
+/* Recover Button */
+.recover-btn {
+  background-color: #ffffff;
+}
+
+.recover-btn:hover {
+  background-color: #a6a6a6;
 }
 
 button:active {
