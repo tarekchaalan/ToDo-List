@@ -139,20 +139,16 @@ button {
   transition: background-color 0.3s ease;
 }
 
-.text-input {
-  border-left: 3px solid #333; /* Adjust color and width as needed */
-}
-
 /* Add Button */
 .add-btn {
   background-color: White;
   border-radius: 0px 10px 10px 0px;
-  height: 36px; /* Adjusted to consider the input's new vertical padding and borders */
-  margin-left: -3px; /* This will ensure the button touches the input. Adjust as needed. */
+  height: 36px;
+  margin-left: -3px;
 }
 
 .add-btn:hover {
-  background-color: #45a047;
+  background-color: #c1c1c1;
 }
 
 /* Edit Button */
@@ -214,9 +210,4 @@ button:active {
   to {
     transform: rotate(360deg);
   }
-}
-
-button.active {
-  font-weight: bold;
-  background-color: #333;
 }

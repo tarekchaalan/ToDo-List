@@ -83,6 +83,15 @@ function App() {
     setTasks(copy);
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    const parts = dateString.split("-");
+    if (parts.length === 3) {
+      return parts[1] + "-" + parts[2]; // MM-DD
+    }
+    return dateString;
+  };
+
   const updateTask = (e, id) => {
     const index = findTaskById(id);
     let copy = [...tasks];
@@ -127,8 +136,8 @@ function App() {
           <>
             <li className="task-header">
               <div className="task-content">
-                <span>Tasks</span>
-                <div className="flex-grow">Due</div>
+                <span className="task-title">Tasks</span>
+                <div className="due-title flex-grow">Due</div>
               </div>
             </li>
             {getSortedTasks().map((task) => (
@@ -159,7 +168,9 @@ function App() {
                   ) : (
                     <>
                       <span>• {task.value}</span>
-                      <div className="flex-grow">{task.deadline || "None"}</div>
+                      <div className="flex-grow">
+                        {formatDate(task.deadline) || "None"}
+                      </div>
                     </>
                   )}
                 </div>
