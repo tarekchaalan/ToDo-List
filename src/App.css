@@ -26,59 +26,90 @@
 }
 
 input {
-    height: 10px;
-    padding: 10px 16px;
-    font-size: 16px;
-    color: White;
-    border: 3px solid white;
-    border-right: none;
-    border-left: none;
-    border-radius: 1px;
-    background-color: transparent;
-    margin-bottom: 10px;
-    outline: none;
+  line-height: normal;
+  box-sizing: border-box;
+  height: 10px;
+  padding: 15px 15px;
+  font-size: 16px;
+  color: White;
+  border: 3px solid white;
+  border-right: none;
+  border-left: none;
+  border-radius: 1px;
+  background-color: transparent;
+  margin-bottom: 10px;
+  outline: none;
+  line-height: 2;
 }
 
 /* For most modern browsers */
 input::placeholder {
-    color: White;
-    opacity: 0.8;
-    font-style: italic;
+  color: White;
+  opacity: 0.8;
+  font-style: italic;
 }
 
 /* For older versions of Firefox */
 input::-moz-placeholder {
-    color: White;
-    opacity: 0.8;
-    font-style: italic;
+  color: White;
+  opacity: 0.8;
+  font-style: italic;
 }
 
 /* For Internet Explorer and Microsoft Edge */
 input:-ms-input-placeholder {
-    color: White;
-    opacity: 0.8;
-    font-style: italic;
+  color: White;
+  opacity: 0.8;
+  font-style: italic;
 }
 
 /* For Safari and older Chrome */
 input::-webkit-input-placeholder {
-    color: White;
-    opacity: 0.8;
-    font-style: italic;
+  color: White;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.task-header {
+  font-weight: bold;
+  background-color: transparent;
+  padding: 10px 0 15px 0px; /* Added 20px padding to the left */
+  list-style-type: none;
+  border-bottom: 1px solid white;
+}
+
+.task-header .task-content span,
+.task-header .flex-grow {
+  text-align: center;
 }
 
 .task-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 0; /* Some vertical padding for better spacing between tasks */
+  padding: 15px 0; /* Some vertical padding for better spacing between tasks */
 }
 
 .task-content {
+  flex-basis: 50%;
   display: flex;
   align-items: center;
-  gap: 10px; /* Space between Edit button and task text */
-  flex-grow: 1; /* Allows this container to take all available space */
+  gap: 10px;
+  flex-grow: 1;
+  width: 100vh; /* Set to 100% width */
+}
+
+.task-content span {
+  flex-basis: 80%; /* Assign 50% width */
+  text-align: left;
+  overflow: hidden; /* To handle long texts */
+  text-overflow: ellipsis; /* Display ellipsis for overflow texts */
+  white-space: nowrap; /* Prevent text wrapping to next line */
+}
+
+.flex-grow {
+  flex-basis: 20%; /* Assign 35% width */
+  text-align: center;
 }
 
 .task-buttons {
@@ -87,69 +118,76 @@ input::-webkit-input-placeholder {
   gap: 10px; /* Space between buttons */
 }
 
+input[placeholder="Enter Task..."] {
+  border-left: 3px solid white;
+  border-radius: 10px 0px 0px 10px;
+}
+
 input[type="text"].task-text {
-  flex-grow: 1; /* Allows input to take all available space */
-  margin: 0; /* Removes margin */
+  flex-grow: 1;
+  margin: 0;
 }
 
 button {
-    margin-left: 10px;
-    padding: 8px 16px;
-    height: 30px;
-    border: none;
-    border-radius: 10px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  margin-left: 10px;
+  padding: 8px 16px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.flex-grow {
-  flex-grow: 1;
-  text-align: right;
+.text-input {
+  border-left: 3px solid #333; /* Adjust color and width as needed */
 }
 
 /* Add Button */
 .add-btn {
-    background-color: #4CAF50;
+  background-color: White;
+  border-radius: 0px 10px 10px 0px;
+  height: 36px; /* Adjusted to consider the input's new vertical padding and borders */
+  margin-left: -3px; /* This will ensure the button touches the input. Adjust as needed. */
 }
 
 .add-btn:hover {
-    background-color: #45A047;
+  background-color: #45a047;
 }
 
 /* Edit Button */
 .edit-btn {
-    background-color: #FFC107;
+  background-color: #ffc107;
 }
 
 .edit-btn:hover {
-    background-color: #FFB300;
+  background-color: #ffb300;
 }
 
 /* Complete Button */
 .complete-btn {
-    background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 .complete-btn:hover {
-    background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 /* Remove Button */
 .remove-btn {
-    background-color: #F44336;
+  background-color: #f44336;
 }
 
 .remove-btn:hover {
-    background-color: #D32F2F;
+  background-color: #d32f2f;
 }
 
 .remove-all-btn {
-  background-color: #F44336; /* For a red background */
+  background-color: #f44336; /* For a red background */
 }
 
 .remove-all-btn:hover {
-  background-color: #D32F2F; /* Darken the background on hover */
+  background-color: #d32f2f; /* Darken the background on hover */
 }
 
 /* Recover Button */
@@ -162,7 +200,7 @@ button {
 }
 
 button:active {
-    opacity: 0.4;
+  opacity: 0.4;
 }
 
 .App-link {
