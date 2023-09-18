@@ -31,21 +31,27 @@ function App() {
     return [...tasks].sort((a, b) => a.deadline.localeCompare(b.deadline));
   };
 
-  const addTask = () => {
-    if (inputValue) {
-      setTasks([
-        ...tasks,
-        {
-          value: inputValue,
-          editable: false,
-          deadline: inputDate,
-          id: Date.now(),
-        },
-      ]);
-      setInputValue("");
-      setInputDate("");
-    }
-  };
+const addTask = () => {
+  if (inputValue) {
+    // Extracting the URL and the text after it
+    const matches = inputValue.match(/(https?:\/\/[^\s]+)\s+(.+)/);
+    const taskValue = matches ? matches[2] : inputValue;
+    const taskUrl = matches ? matches[1] : null;
+
+    setTasks([
+      ...tasks,
+      {
+        value: taskValue,
+        url: taskUrl,
+        editable: false,
+        deadline: inputDate,
+        id: Date.now(),
+      },
+    ]);
+    setInputValue("");
+    setInputDate("");
+  }
+};
 
   const findTaskById = (id) => tasks.findIndex((task) => task.id === id);
 
@@ -167,7 +173,20 @@ function App() {
                     </>
                   ) : (
                     <>
-                      <span>• {task.value}</span>
+                      {task.url ? (
+                        <span>
+                          <a
+                            href={task.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="task-link"
+                          >
+                            {task.value}
+                          </a>
+                        </span>
+                      ) : (
+                        <span>{task.value}</span>
+                      )}
                       <div className="flex-grow">
                         {formatDate(task.deadline) || "None"}
                       </div>
@@ -227,7 +246,17 @@ function App() {
             {deletedTasks.map((task, sortedIndex) => (
               <li key={sortedIndex} className="task-item">
                 <div className="task-content">
-                  <span>• {task.value}</span>
+                  {task.url ? (
+                    <a
+                      href={task.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      • {task.value}
+                    </a>
+                  ) : (
+                    <span>• {task.value}</span>
+                  )}
                 </div>
                 <div className="task-buttons">
                   <button

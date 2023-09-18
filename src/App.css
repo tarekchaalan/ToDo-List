@@ -88,6 +88,21 @@ input::-webkit-input-placeholder {
   align-items: center;
   justify-content: space-between;
   padding: 15px 0; /* Some vertical padding for better spacing between tasks */
+  list-style-type: none; /* Remove default bullet point */
+  position: relative;
+}
+
+.task-item::before {
+  content: '•'; /* Custom bullet point */
+  position: absolute;
+  left: -15px; /* Adjust as needed */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+a {
+  color: white;
+  text-decoration: underline;
 }
 
 .task-content {
